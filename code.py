@@ -112,8 +112,49 @@ def Morse_code():
     elif r_eye_blink_state == "closed" and l_eye_blink_state == "closed":
         return "*"
     
-    def Voice():
-    pass
+    
+    def voice(joint) :
+
+        list = ["*", ".", "_", "..", "._", "_.", "__", "...", "___"]
+
+        from gtts import gTTS
+        import os
+    
+        if joint == list[0]:
+            mytext = "Scan has been initiated"
+    
+        elif joint == list[1]:
+            mytext = "I am hungry, please bring something to eat"
+    
+        elif joint == list[2]:
+            mytext = "Feeling pretty thirsty, please bring a glass of water"
+    
+        elif joint == list[3]:
+            mytext = "Its urgent, please walk me through the toilet "
+    
+        elif joint == list[4]:
+            mytext = "Help, Emergency, Help"
+
+        elif joint == list[5]:
+            mytext = "Random command 1"
+    
+        elif joint == list[6]:
+            mytext = "Random command 2"
+    
+        elif joint == list[7]:
+            mytext = "Random command 3"
+    
+        elif joint == list[8]:
+            mytext = "Random command 4"
+    
+    
+        language = 'en'
+    
+        myobj = gTTS(text=mytext, lang=language, slow=False)
+    
+        myobj.save("voices.mp3")
+        os.system("voices.mp3")
+    
 
    
 while True:
@@ -135,7 +176,11 @@ while True:
         seq = []
     elif temp == "." or temp == "_":
         seq.append(temp)
-    Voice(seq)   
+        
+    #   Joining all the appended elements together 
+    joint_seq = ("".join(seq))
+    
+    Voice(joint_seq)   
     k = cv2.waitKey(1)
     if k == "s":
         break
