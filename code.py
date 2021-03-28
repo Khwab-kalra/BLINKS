@@ -1,5 +1,11 @@
+#issue-1 closing factor to determine time
+#issue -2 not picking one eye
+#issue -3 not joining words
 import cv2
 import numpy
+from gtts import gTTS
+import os
+import time
 
 l_eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_lefteye_2splits.xml')
 r_eye_cascade = cv2.CascadeClassifier('haarcascades/haarcascade_righteye_2splits.xml')
@@ -15,9 +21,11 @@ minNeighbours = 5
 left_eye_found = False
 right_eye_found = False
 sequence = list()
-seq = list()
-
-
+cmd_end = False
+cmd_count = 0
+Speak = False
+joint_seq = ""
+time = 0
 
 def detect(frame):
     global left_eye_found, l_eye_x, l_eye_y, right_eye_found, r_eye_x, r_eye_y, frame2
@@ -113,47 +121,44 @@ def Morse_code():
         return "*"
     
     
-    def voice(joint) :
+def Voice(joint) :
 
-        list = ["*", ".", "_", "..", "._", "_.", "__", "...", "___"]
-
-        from gtts import gTTS
-        import os
-    
+        list = [".", "_", "..", "._", "_.", "__", "...", "___"]
+        mytext = ""
         if joint == list[0]:
-            mytext = "Scan has been initiated"
+            mytext = "yes "
     
         elif joint == list[1]:
-            mytext = "I am hungry, please bring something to eat"
-    
+             mytext = "no "
+        
         elif joint == list[2]:
-            mytext = "Feeling pretty thirsty, please bring a glass of water"
-    
-        elif joint == list[3]:
             mytext = "Its urgent, please walk me through the toilet "
     
-        elif joint == list[4]:
+        elif joint == list[3]:
             mytext = "Help, Emergency, Help"
 
+        elif joint == list[4]:
+            mytext = "I am hungry, please bring something to eat"
+    
         elif joint == list[5]:
-            mytext = "Random command 1"
+            mytext = "Feeling pretty thirsty, please bring a glass of water"
     
         elif joint == list[6]:
-            mytext = "Random command 2"
-    
-        elif joint == list[7]:
             mytext = "Random command 3"
     
-        elif joint == list[8]:
-            mytext = "Random command 4"
-    
-    
+        elif joint == list[7]:
+            mytext = "random command 4"
+            
+         elif joint == "*":
+            mytext = "Initializing"
+        if time > 10 sec:
+            cmd_count = 0
+            return
         language = 'en'
-    
         myobj = gTTS(text=mytext, lang=language, slow=False)
-    
         myobj.save("voices.mp3")
         os.system("voices.mp3")
+            
     
 
    
@@ -169,18 +174,22 @@ while True:
     detect(frame)
     detect_individual_eye(frame)
     cv2.imshow("Blinks",frame_eye)
-    print(f"({l_eye_blink_state},{r_eye_blink_state})")
     
     temp = Morse_code()
-    if temp == "*":
-        seq = []
-    elif temp == "." or temp == "_":
-        seq.append(temp)
-        
-    #   Joining all the appended elements together 
-    joint_seq = ("".join(seq))
+    if cmd_count == 0:
+            joint_seq = ""
+            cmd_count += 1
+            Voice("*")
+    elif cmd_count > 0:
+        if temp == "*":
+            Voice(joint_seq)
+            joint_seq = ""
+        elif temp == "." or temp == "_":
+           #Joining all the appended elements together 
+            joint_seq = ("".join(temp))   
     
-    Voice(joint_seq)   
+   
+    
     k = cv2.waitKey(1)
     if k == "s":
         break
