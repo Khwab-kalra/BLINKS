@@ -1,0 +1,3 @@
+Efficeincy of Opencv greatly depends on Camera quality and you may have to readjust the Multiscale parameters according to your pc sepecifications for better accuracy.
+This program is currently only made to accept maximum of 7 commands and max morse code size acceptable is 3 symbols.
+
